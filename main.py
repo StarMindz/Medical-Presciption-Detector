@@ -69,15 +69,23 @@ generation_config = {
     "response_mime_type": "text/plain",
 }
 
+safety_settings = [
+  {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+  {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+  {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+  {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+]
+
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
     generation_config=generation_config,
-    system_instruction="return response as a json of this format, and isPrescription is a boolean value thats either true or false.\n\n{\nisPrescription: true\n}",
+    safety_settings=safety_settings,
+    system_instruction="return response as a json of this format, and isPrescription is a boolean value thats either true or false indicating if the image is a presciption or not and drugExist is a boolean value thats either true or false indicating if the drug with the given name is listed in the presciption or not.\n\n{\nisPrescription: true,\ndrugExist: true\n}",
 )
 
 
-@app.post("/process-image/")
-async def process_image(file: UploadFile = File(...)):
+@app.post("/process-image/{name}")
+async def process_image(name: str = "string", file: UploadFile = File(...)):
     try:
         mime_type = file.content_type
         file_extension = mime_type.split('/')[-1]
@@ -100,7 +108,7 @@ async def process_image(file: UploadFile = File(...)):
                 },
             ]
         )
-        prompt = "I need to analyse this note to determine if it's a medical prescription or not."
+        prompt = f"I need to analyse this note to determine if it's a medical prescription. Also verify if a drug with the name: {name} is listed in the presciption?"
         response = chat_session.send_message(prompt)
 
         # Ensure response is in a serializable format
@@ -116,7 +124,8 @@ async def process_image(file: UploadFile = File(...)):
 
         # Now, convert the cleaned string to a JSON object
         # json_data = json.loads(clean_json_string)
-        return extract_json(clean_json_string)
+        response = extract_json(clean_json_string)
+        return response
 
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
