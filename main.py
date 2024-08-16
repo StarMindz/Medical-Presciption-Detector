@@ -105,6 +105,9 @@ model2 = genai.GenerativeModel(
     system_instruction="You are AMAR Care's virtual assistant, responsible for assisting users with product inquiries, providing information on product availability, price, and stock levels, and guiding users on how to book consultations with health professionals. Maintain a professional, friendly, and helpful tone in all interactions. Users can upload a valid doctor's prescription to order drugs. ome health professionals even offer free consultation services",
 )
 
+class Chat(BaseModel):
+    message: str
+
 
 @app.post("/process-image/{name}")
 async def process_image(name: str = "string", file: UploadFile = File(...)):
@@ -156,13 +159,13 @@ async def process_image(name: str = "string", file: UploadFile = File(...)):
 
 
 @app.post("/chat")
-async def chat(input: str):
+async def chat(input: Chat):
     try:
         # Start a chat session with the Gemini model
         chat_session = model2.start_chat()
         
         # Send the user's message to the Gemini model
-        response = chat_session.send_message(input)
+        response = chat_session.send_message(input.message)
         
         return response.text
 
