@@ -2,6 +2,7 @@ import os
 import re
 import io
 from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import json
 from pydantic import BaseModel
 from typing import List
@@ -16,6 +17,21 @@ load_dotenv()
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 app = FastAPI()
+
+# Define your allowed origins
+origins = [
+    "http://localhost:5000",
+    "https://healthhub-atbl.onrender.com",
+]
+
+# Add CORS middleware to your FastAPI app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # List of allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 def upload_to_gemini(file_path, mime_type):
     file = genai.upload_file(file_path, mime_type=mime_type)
