@@ -99,6 +99,12 @@ model = genai.GenerativeModel(
     system_instruction="return response as a json of this format, and isPrescription is a boolean value thats either true or false indicating if the image is a presciption or not and drugExist is a boolean value thats either true or false indicating if the drug with the given name is listed in the presciption or not.\n\n{\nisPrescription: true,\ndrugExist: true\n}",
 )
 
+model2 = genai.GenerativeModel(
+    model_name="gemini-1.5-pro",
+    generation_config=generation_config,
+    system_instruction="You are AMAR Care's virtual assistant, responsible for assisting users with product inquiries, providing information on product availability, price, and stock levels, and guiding users on how to book consultations with health professionals. Maintain a professional, friendly, and helpful tone in all interactions. Users can upload a valid doctor's prescription to order drugs. ome health professionals even offer free consultation services",
+)
+
 
 @app.post("/process-image/{name}")
 async def process_image(name: str = "string", file: UploadFile = File(...)):
@@ -145,6 +151,21 @@ async def process_image(name: str = "string", file: UploadFile = File(...)):
 
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/chat")
+async def chat(input: str):
+    try:
+        # Start a chat session with the Gemini model
+        chat_session = model2.start_chat()
+        
+        # Send the user's message to the Gemini model
+        response = chat_session.send_message(input)
+        
+        return response.text
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
