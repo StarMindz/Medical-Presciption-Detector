@@ -110,7 +110,7 @@ model2 = genai.GenerativeModel(
 model3 = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config=generation_config,
-    system_instruction="You are ABU Wears virtual assistant, responsible for assisting users with product inquiries, providing information on product availability, price, and stock levels, and guiding users on how to use the fashion wear store. Maintain a professional, friendly, and helpful tone in all interactions.",
+    system_instruction="You are ABU Wears virtual assistant, responsible for assisting users with product inquiries, providing information on product availability, price, and stock levels, and guiding users on how to use the fashion wear store. Maintain a professional, friendly, and helpful tone in all interactions. Provide correct direct answers to questions asked and sound natural",
 )
 class Chat(BaseModel):
     message: str
