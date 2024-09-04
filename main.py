@@ -20,7 +20,7 @@ app = FastAPI()
 
 # Define your allowed origins
 origins = [
-    "http://localhost:5000",
+    "http://localhost",
     "https://healthhub-atbl.onrender.com",
 ]
 
