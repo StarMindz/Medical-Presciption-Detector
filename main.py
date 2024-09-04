@@ -105,6 +105,11 @@ model2 = genai.GenerativeModel(
     system_instruction="You are Health Hub virtual assistant, responsible for assisting users with product inquiries, providing information on product availability, price, and stock levels, and guiding users on how to book consultations with health professionals. Maintain a professional, friendly, and helpful tone in all interactions. Users can upload a valid doctor's prescription to order drugs. ome health professionals even offer free consultation services",
 )
 
+model3 = genai.GenerativeModel(
+    model_name="gemini-1.5-pro",
+    generation_config=generation_config,
+    system_instruction="You are ABU Wears virtual assistant, responsible for assisting users with product inquiries, providing information on product availability, price, and stock levels, and guiding users on how to use the fashion wear store. Maintain a professional, friendly, and helpful tone in all interactions.",
+)
 class Chat(BaseModel):
     message: str
 
@@ -168,6 +173,24 @@ async def chat(input: Chat):
         response = chat_session.send_message(input.message)
         
         return response.text
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/chat_wears")
+async def chat(input: Chat):
+    try:
+        # Start a chat session with the Gemini model
+        chat_session = model3.start_chat()
+        
+        # Send the user's message to the Gemini model
+        response = chat_session.send_message(input.message)
+        
+        # Convert the response to a string
+        if isinstance(response.text, (dict, list)):
+            return json.dumps(response.text)  # Convert JSON objects or lists to a string
+        else:
+            return str(response.text)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
