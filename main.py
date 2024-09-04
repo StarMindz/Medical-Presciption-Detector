@@ -23,6 +23,7 @@ origins = [
     "http://localhost:5000",
     "http://localhost:5173",
     "https://healthhub-atbl.onrender.com",
+    "https://abu-wears.netlify.app/"
 ]
 
 # Add CORS middleware to your FastAPI app
