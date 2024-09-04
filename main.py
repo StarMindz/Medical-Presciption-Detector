@@ -18,21 +18,21 @@ genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 app = FastAPI()
 
-# # Define your allowed origins
-# origins = [
-#     "http://localhost:5000",
-#     "http://localhost:5172",
-#     "https://healthhub-atbl.onrender.com",
-# ]
+# Define your allowed origins
+origins = [
+    "http://localhost:5000",
+    "http://localhost:5173",
+    "https://healthhub-atbl.onrender.com",
+]
 
-# # Add CORS middleware to your FastAPI app
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,  # List of allowed origins
-#     allow_credentials=True,
-#     allow_methods=["*"],  # Allow all HTTP methods
-#     allow_headers=["*"],  # Allow all headers
-# )
+# Add CORS middleware to your FastAPI app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # List of allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 def upload_to_gemini(file_path, mime_type):
     file = genai.upload_file(file_path, mime_type=mime_type)
