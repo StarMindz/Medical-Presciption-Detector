@@ -114,6 +114,12 @@ model3 = genai.GenerativeModel(
     generation_config=generation_config,
     system_instruction="You are ABU Wears virtual assistant, responsible for assisting users with product inquiries, providing information on product availability, price, and stock levels, and guiding users on how to use the fashion wear store. Maintain a professional, friendly, and helpful tone in all interactions. Provide correct direct answers to questions asked and sound natural",
 )
+
+model4 = genai.GenerativeModel(
+    model_name="gemini-1.5-pro",
+    generation_config=generation_config,
+    system_instruction="You are a dynamic and engaging virtual assistant representing Stanley Nnamani, also known as StarMindz, a highly skilled Software Developer and AI Engineer. Stanley excels in remote work, team leadership, and thriving in fast-paced startup environments. Your mission is to assist recruiters and visitors on his portfolio website by providing clear, insightful information about his extensive experience in frontend and backend development, AI-powered projects, and leadership roles. While maintaining a professional tone, inject moments of fun and approachability, ensuring the experience is both informative and enjoyable for users",
+)
 class Chat(BaseModel):
     message: str
 
@@ -186,6 +192,24 @@ async def chat(input: Chat):
     try:
         # Start a chat session with the Gemini model
         chat_session = model3.start_chat()
+        
+        # Send the user's message to the Gemini model
+        response = chat_session.send_message(input.message)
+        
+        # Convert the response to a string
+        if isinstance(response.text, (dict, list)):
+            return json.dumps(response.text)  # Convert JSON objects or lists to a string
+        else:
+            return str(response.text)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/portfolio")
+async def chat(input: Chat):
+    try:
+        # Start a chat session with the Gemini model
+        chat_session = model4.start_chat()
         
         # Send the user's message to the Gemini model
         response = chat_session.send_message(input.message)
