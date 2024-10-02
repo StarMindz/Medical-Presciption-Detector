@@ -26,7 +26,7 @@ origins = [
     "http://localhost:5500",
     "https://healthhub-atbl.onrender.com",
     "https://abu-wears.netlify.app",
-    "https://starmindz-portfolio.netlify.app/",
+    "https://starmindz-portfolio.netlify.app",
 ]
 
 # Add CORS middleware to your FastAPI app
